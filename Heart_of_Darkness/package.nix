@@ -57,7 +57,7 @@ in stdenv.mkDerivation {
       chmod u+w -- "\$savepath"/hode.ini
     fi
     cd -- "\$savepath" # because hode.ini is read from working dir
-    $out/bin/hode --datapath=$out/share/appdata --savepath="\$savepath"
+    $out/bin/hode --datapath=$out/share/appdata --savepath="\$savepath" "\$@"
     EOF
     chmod a+x $out/bin/Heart_of_Darkness
     runHook postInstall
