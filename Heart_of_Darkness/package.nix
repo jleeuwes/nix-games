@@ -19,6 +19,7 @@ let
     url = "https://d1.myabandonware.com/t/72769615-3087-46cf-b89f-7191e2478077/Heart-of-Darkness_Win_EN_RIP-Version.zip";
     hash = "sha256-WWvyf5fJyKxKwmpuv0oXg74bsbDZ1YDSxRaH6ka606g=";
   };
+  hodeIniSrc = ./hode.ini;
 in stdenv.mkDerivation {
   name = "hode";
   buildInputs = [ bash SDL2 ];
@@ -38,6 +39,7 @@ in stdenv.mkDerivation {
     7z x 'Heart of Darkness (Europe) (Rerelease).iso'
     mv paf $out/share/appdata
     popd
+    cp ${hodeIniSrc} $out/share/appdata/hode.ini
     
     mkdir -p $out/bin
     cp hode $out/bin
@@ -47,6 +49,14 @@ in stdenv.mkDerivation {
       XDG_CONFIG_HOME="\$HOME"/.config
     fi
     savepath="\$XDG_CONFIG_HOME"/Heart_of_Darkness
+    printf "savepath=%q\n" "\$savepath" >&2
+    mkdir -p -- "\$savepath"
+    if [[ ! -e \$savepath/hode.ini ]]; then
+      printf "Copying default hode.ini to savepath\n" >&2
+      cp $out/share/appdata/hode.ini -- "\$savepath"
+      chmod u+w -- "\$savepath"/hode.ini
+    fi
+    cd -- "\$savepath" # because hode.ini is read from working dir
     $out/bin/hode --datapath=$out/share/appdata --savepath="\$savepath"
     EOF
     chmod a+x $out/bin/Heart_of_Darkness
